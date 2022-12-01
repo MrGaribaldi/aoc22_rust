@@ -1,6 +1,10 @@
-struct ElvesWithMostCalories(u32, u32, u32);
+use itertools::Itertools;
+use std::str::FromStr;
 
-impl ElvesWithMostCalories {
+#[derive(Default)]
+struct MaxCaloriesCarried(u32, u32, u32);
+
+impl MaxCaloriesCarried {
     fn insert(&mut self, calories: u32) {
         if calories < self.2 {
             return;
@@ -22,9 +26,7 @@ impl ElvesWithMostCalories {
     fn get_total(&self) -> u32 {
         self.0 + self.1 + self.2
     }
-    fn new() -> ElvesWithMostCalories {
-        ElvesWithMostCalories(0, 0, 0)
-    }
+    
 }
 
 pub fn part_one(input: &str) -> Option<u32> {
@@ -32,12 +34,10 @@ pub fn part_one(input: &str) -> Option<u32> {
     let mut current_calories: u32 = 0;
 
     for l in input.lines() {
-        if l.len() == 0 {
-            highest_calorie_count = if highest_calorie_count > current_calories {
-                highest_calorie_count
-            } else {
-                current_calories
-            };
+        if l.is_empty() {
+            if highest_calorie_count < current_calories {
+                highest_calorie_count = current_calories;
+            } 
             current_calories = 0;
             continue;
         }
@@ -53,23 +53,41 @@ pub fn part_one(input: &str) -> Option<u32> {
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
-    let mut elfs:ElvesWithMostCalories = ElvesWithMostCalories::new();
+    let mut mcc:MaxCaloriesCarried = MaxCaloriesCarried::default();
     let mut calories = 0u32;
     for l in input.lines(){
-        if l.len() == 0 {
-            elfs.insert(calories);
+        if l.is_empty() {
+            mcc.insert(calories);
             calories = 0;
             continue;
         }
         calories += l.parse::<u32>().unwrap();
     }
-    Some(elfs.get_total())
+    Some(mcc.get_total())
 }
+
+///Solutions of others, will supplement with proper attribution tomorrow.
+fn part_one_iterator_style(input: &str) -> Option<u32>{
+    let mut calories:Vec<usize> = input.lines().group_by(|s| s.is_empty()).into_iter().filter_map(|g| g.1.filter_map(|s| usize::from_str(s).ok()).sum1()).collect();
+    calories.sort();
+    let calories = calories.into_iter().rev().next();
+    Some( calories.unwrap() as u32)
+}
+
+fn part_two_iterator_style(input: &str) -> Option<u32>{
+    let mut calories:Vec<usize> = input.lines().group_by(|s| s.is_empty()).into_iter().filter_map(|g| g.1.filter_map(|s| usize::from_str(s).ok()).sum1()).collect();
+    calories.sort();
+    let calories = calories.into_iter().rev().take(3).sum::<usize>();
+    Some( calories as u32)
+}
+
 
 fn main() {
     let input = &advent_of_code::read_file("inputs", 1);
     advent_of_code::solve!(1, part_one, input);
+    advent_of_code::solve!(1, part_one_iterator_style, input);
     advent_of_code::solve!(2, part_two, input);
+    advent_of_code::solve!(2, part_two_iterator_style, input);
 }
 
 #[cfg(test)]
