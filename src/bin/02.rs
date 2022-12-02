@@ -50,6 +50,37 @@ fn getScore(opponent: GameMove, player: GameMove) -> u32 {
     }
 }
 
+fn getLoosingMove(opponent: &char) -> GameMove {
+    match opponent{
+        'A' => GameMove::Scissor,
+        'B' => GameMove::Rock,
+        _ => GameMove::Paper
+    }
+}
+
+fn getMatchingMove(opponent: &char) -> GameMove {
+    match opponent{
+        'A' => GameMove::Rock,
+        'B' => GameMove::Paper,
+        _ => GameMove::Scissor
+    }
+}
+
+fn getWinningMove(opponent: &char) -> GameMove {
+    match opponent{
+        'A' => GameMove::Paper,
+        'B' => GameMove::Scissor,
+        _ => GameMove::Rock
+    }
+}
+fn getRequiredMove( opponent: &char, desired_outcome: char) -> GameMove {
+    match desired_outcome {
+        'X' => getLoosingMove(&opponent),
+        'Y' => getMatchingMove(&opponent),
+        _ => getWinningMove(&opponent)
+    }
+}
+
 pub fn part_one(input: &str) -> Option<u32> {
     let mut score:u32 = 0; 
     for l in input.lines() {
@@ -65,8 +96,19 @@ pub fn part_one(input: &str) -> Option<u32> {
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
-    None
+    let mut score:u32 = 0; 
+    for l in input.lines() {
+        let mut moves = l.chars();
+        let opponent = moves.next()?;
+        moves.next(); //blank
+        let desired_outcome = moves.next()?;
+        let required_move =  getRequiredMove( &opponent, desired_outcome);
+        let opponent = GameMove::new(opponent)?;
+        score += getScore(opponent, required_move);
+    }
+    Some(score)
 }
+
 
 fn main() {
     let input = &advent_of_code::read_file("inputs", 2);
