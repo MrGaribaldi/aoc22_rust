@@ -1,10 +1,8 @@
-use std::num;
 
-use itertools::Itertools;
 
 pub fn part_one(input: &str) -> Option<u32> {
     let mut num_overlapping_pairs = 0u32;
-    for (i, l) in input.lines().enumerate() {
+    for l in input.lines() {
         let mut pairs = l.split(',');
 
         let first_pair = pairs.next()?;
@@ -14,28 +12,20 @@ pub fn part_one(input: &str) -> Option<u32> {
         let mut second_pair = pairs.next()?.split('-').collect::<Vec<&str>>().into_iter();
         let b1n = second_pair.next()?.parse::<u32>().unwrap();
         let b1_2n = second_pair.next()?.parse::<u32>().unwrap();
-        let mut overlaps = 0;
-        if a1n == b1n {
-            overlaps  += 1;
+        let overlaps = if a1n == b1n {
+            1
         }else if a1n <= b1n {
-            if b1_2n <= a1_2n {
-                //is overlapping
-                overlaps  += 1;
-            } 
-        } else if a1_2n <= b1_2n {
-            //is overlapping, a is contained in b
-            overlaps  += 1;
-        }
-        println!("{}: {}-{} and {}-{}, does it overlap {}", i, a1n, a1_2n, b1n, b1_2n, overlaps > 0);
+            u32::from(b1_2n <= a1_2n)
+        } else {u32::from(a1_2n <= b1_2n)};
+
         num_overlapping_pairs += overlaps;
     }
-    println!("Found {} overlaps in {} lines", num_overlapping_pairs, input.lines().count());
     Some(num_overlapping_pairs)
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
     let mut num_overlapping_pairs = 0u32;
-    for (i, l) in input.lines().enumerate() {
+    for l in input.lines() {
         let mut pairs = l.split(',');
 
         let first_pair = pairs.next()?;
@@ -45,12 +35,12 @@ pub fn part_two(input: &str) -> Option<u32> {
         let mut second_pair = pairs.next()?.split('-').collect::<Vec<&str>>().into_iter();
         let b1n = second_pair.next()?.parse::<u32>().unwrap();
         let b1_2n = second_pair.next()?.parse::<u32>().unwrap();
-        let mut overlaps = 0;
+        let overlaps =
         if a1_2n < b1n || b1_2n < a1n {
-            overlaps = 0;
+            0
         }else {
-            overlaps = 1;
-        }
+            1
+        };
         num_overlapping_pairs += overlaps;
     }
     println!("Found {} overlaps in {} lines", num_overlapping_pairs, input.lines().count());
