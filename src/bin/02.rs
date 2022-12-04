@@ -32,7 +32,7 @@ impl GameMove {
     }
 }
 
-fn getValue(g_move: &GameMove)-> u32{
+fn get_value(g_move: &GameMove)-> u32{
     match g_move {
         GameMove::Rock => 1,
         GameMove::Paper => 2,
@@ -40,17 +40,17 @@ fn getValue(g_move: &GameMove)-> u32{
     }
 }
 
-fn getScore(opponent: GameMove, player: GameMove) -> u32 {
-    let move_value = getValue(&player);
+fn get_score(opponent: GameMove, player: GameMove) -> u32 {
+    let move_value = get_value(&player);
     match player.partial_cmp(&opponent) {
         Some(Ordering::Equal) => 3 + move_value,
         Some(Ordering::Greater) => 6 + move_value,
-        Some(Ordering::Less) => 0 + move_value,
+        Some(Ordering::Less) => move_value,
         None => 0
     }
 }
 
-fn getLoosingMove(opponent: &char) -> GameMove {
+fn get_loosing_move(opponent: &char) -> GameMove {
     match opponent{
         'A' => GameMove::Scissor,
         'B' => GameMove::Rock,
@@ -58,7 +58,7 @@ fn getLoosingMove(opponent: &char) -> GameMove {
     }
 }
 
-fn getMatchingMove(opponent: &char) -> GameMove {
+fn get_matching_move(opponent: &char) -> GameMove {
     match opponent{
         'A' => GameMove::Rock,
         'B' => GameMove::Paper,
@@ -66,18 +66,18 @@ fn getMatchingMove(opponent: &char) -> GameMove {
     }
 }
 
-fn getWinningMove(opponent: &char) -> GameMove {
+fn get_winning_move(opponent: &char) -> GameMove {
     match opponent{
         'A' => GameMove::Paper,
         'B' => GameMove::Scissor,
         _ => GameMove::Rock
     }
 }
-fn getRequiredMove( opponent: &char, desired_outcome: char) -> GameMove {
+fn get_required_move( opponent: &char, desired_outcome: char) -> GameMove {
     match desired_outcome {
-        'X' => getLoosingMove(&opponent),
-        'Y' => getMatchingMove(&opponent),
-        _ => getWinningMove(&opponent)
+        'X' => get_loosing_move(opponent),
+        'Y' => get_matching_move(opponent),
+        _ => get_winning_move(opponent)
     }
 }
 
@@ -89,7 +89,7 @@ pub fn part_one(input: &str) -> Option<u32> {
         moves.next(); //blank
         let player = GameMove::new(moves.next()?)?;
 
-        score += getScore(opponent, player);
+        score += get_score(opponent, player);
 
     }
     Some(score)
@@ -102,9 +102,9 @@ pub fn part_two(input: &str) -> Option<u32> {
         let opponent = moves.next()?;
         moves.next(); //blank
         let desired_outcome = moves.next()?;
-        let required_move =  getRequiredMove( &opponent, desired_outcome);
+        let required_move =  get_required_move( &opponent, desired_outcome);
         let opponent = GameMove::new(opponent)?;
-        score += getScore(opponent, required_move);
+        score += get_score(opponent, required_move);
     }
     Some(score)
 }

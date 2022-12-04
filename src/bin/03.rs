@@ -1,4 +1,4 @@
-use std::collections::{btree_set, BTreeSet, BTreeMap};
+use std::collections::{BTreeSet};
 
 use itertools::Itertools;
 
@@ -13,7 +13,7 @@ fn get_priority(input: u8)-> u32 {
 
 pub fn part_one(input: &str) -> Option<u32> {
     let mut summed_priorities = 0u32;    
-    for l in input.lines().into_iter() {
+    for l in input.lines() {
         let (first, second) = l.split_at(l.len()/2);
         for c in first.chars() {
             if second.contains(c) {
@@ -39,7 +39,6 @@ fn get_group_badge(group_data: Vec<&str>) -> char {
     }
     let first_intersection:BTreeSet<char> = rucksacks[0].intersection(&rucksacks[1]).cloned().collect();
     let second_intersection:Vec<char> = rucksacks[2].intersection(&first_intersection).cloned().collect();
-    println!("Length of intersenction: {}, full intersection {:?}", second_intersection.len(), second_intersection);
 
     second_intersection[0]
     
