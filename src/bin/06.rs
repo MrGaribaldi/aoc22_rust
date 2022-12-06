@@ -1,18 +1,22 @@
 
-#[derive(Debug, Default)]
-struct RingBuffer{
-    data: [char; 14],
+#[derive(Debug)]
+struct RingBuffer<const N:usize>{
+    data: [char; N],
     data_index: usize
 }
 
-impl RingBuffer{
-    fn add(&mut self, input:char, modulo:usize){
-        self.data[self.data_index]= input;
-        self.data_index = (self.data_index+1)%modulo;
+impl<const N:usize>  RingBuffer<N>{
+    fn default() -> RingBuffer<N> {
+        let r: RingBuffer<N> = RingBuffer { data: [' '; N], data_index: 0 };
+        r
     }
-    fn scan(&self, modulo:usize) -> bool {
-        for i in 0usize..modulo {
-            for j in (i+1)..modulo {
+    fn add(&mut self, input:char){
+        self.data[self.data_index]= input;
+        self.data_index = (self.data_index+1)%N;
+    }
+    fn scan(&self) -> bool {
+        for i in 0usize..N {
+            for j in (i+1)..N {
                 if self.data[i] == self.data[j] { return false }
             }
         }
@@ -20,12 +24,12 @@ impl RingBuffer{
     }
 }
 pub fn part_one(input: &str) -> Option<u32> {
-    let mut rb = RingBuffer::default();
+    let mut rb = RingBuffer::<4>::default();
     let char_input = input.chars();
     for (i, c) in char_input.enumerate(){
-        rb.add(c, 4);
+        rb.add(c);
         if i > 2 {
-            let found = rb.scan(4);
+            let found = rb.scan();
             if found { return Some((i+1) as u32) }
         }
     }
@@ -33,12 +37,12 @@ pub fn part_one(input: &str) -> Option<u32> {
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
-    let mut rb = RingBuffer::default();
+    let mut rb = RingBuffer::<14>::default();
     let char_input = input.chars();
     for (i, c) in char_input.enumerate(){
-        rb.add(c, 14);
+        rb.add(c);
         if i > 2 {
-            let found = rb.scan(14);
+            let found = rb.scan();
             if found { return Some((i+1) as u32) }
         }
     }
