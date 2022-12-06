@@ -7,8 +7,8 @@ struct RingBuffer<const N:usize>{
 
 impl<const N:usize>  RingBuffer<N>{
     fn default() -> RingBuffer<N> {
-        let r: RingBuffer<N> = RingBuffer { data: [' '; N], data_index: 0 };
-        r
+        RingBuffer { data: [' '; N], data_index: 0 }
+        
     }
     fn add(&mut self, input:char){
         self.data[self.data_index]= input;
@@ -41,7 +41,7 @@ pub fn part_two(input: &str) -> Option<u32> {
     let char_input = input.chars();
     for (i, c) in char_input.enumerate(){
         rb.add(c);
-        if i > 2 {
+        if i > 12 {
             let found = rb.scan();
             if found { return Some((i+1) as u32) }
         }
